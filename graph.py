@@ -1,3 +1,4 @@
+
 class Graph():
 
     def __init__(self):
@@ -157,28 +158,27 @@ class Graph():
         ligne = ["1", "2", "3", "3bis", "4", "5", "6", "7", "7bis","8", "9", "10", "11", "12", "13", "14"]
         ter_l = [66, 213, 114, 116, 262, 28, 57, 152, 170, 89, 181, 117, 68, 178, 72, 24]
         for i in ligne:
-            self.ligne[i] = list()
+            self.ligne[i] = None
         with open("new.txt", "r") as file:
             for line in file:
                 divide = line.split()
                 if 852 <= nb_ligne < 868:
                     for index, number in enumerate(ter_l):
-
                         if number == int(divide[0]):
                             if index == 3:
                                 index = "3bis"
-                                self.ligne[index].append(line)
+                                self.ligne[index] = divide
                             elif index == 8:
                                 index = "7bis"
-                                self.ligne[index].append(line)
+                                self.ligne[index] = divide 
                             elif  3 < index < 8 :
-                                self.ligne[str(index)].append(line)
+                                self.ligne[str(index)] = divide  
                             elif 8 < index <= 15:
                                 index = index -1
-                                self.ligne[str(index)].append(line)
+                                self.ligne[str(index)] = divide
                             else:
                                 index = index + 1
-                                self.ligne[str(index)].append(line)        
+                                self.ligne[str(index)] = divide     
                 nb_ligne += 1  
         return self.ligne
 #################### ALGO Dijkstra ####################
@@ -197,6 +197,10 @@ class Graph():
     def affiche_trajet(self,pere,start,end, suivant):
 
         if end == start:
+            self.duree = {}
+            self.fini_traiter = []
+            self.chemin_emprunte = {}
+            self.temps_toto = None
             return [start] + suivant
         else:
             return (self.affiche_trajet(pere, start, pere[end], [end]+ suivant))
@@ -206,7 +210,7 @@ class Graph():
         minimun = float("inf")
 
         if entrain_de_traiter == end:
-            return self.temps_toto, self.affiche_trajet(self.chemin_emprunte, start, end, [])
+            return self.duree[entrain_de_traiter], self.affiche_trajet(self.chemin_emprunte, start, end, [])
 
         for successeur, temps in self.prochaine_station[entrain_de_traiter]:
             if successeur not in self.fini_traiter:
@@ -217,6 +221,7 @@ class Graph():
                     if seconde < minimun:
                         minimun = seconde
                         self.temps_toto = minimun
+
                         
         self.fini_traiter.append(entrain_de_traiter) 
         pas_traite = dict(self.duree)
@@ -224,31 +229,13 @@ class Graph():
             pas_traite.pop(s)
         prochain_à_etre_traite = min(pas_traite, key= pas_traite.get)
 
-
         return self.dijkstra(graph, prochain_à_etre_traite, end, start)
 
 
 #################### AUTRES ####################
 
-    def changeLigne(self,ligne): # ligne
-        """
-        on change les numero de station par leur nom
-        """
-        for nom_station, ses_id in self.station.items():
 
-            for id in ses_id:
-                for nom, next in ligne.items():
-                    for val in next: 
-                        if len(val) == 1:
-                            val = "000"+val
-                        if len(val) == 2:
-                            val ="00"+val
-                        if len(val) == 3:
-                            val = "0"+val
-                        if id == val:
-                            ligne[nom] = nom_station
-
-    def changeChemin(self, chemin): # trajet plus cours chemin
+    def change_Num_to_Station(self, chemin): # Dijkstra ou self.ligne ex : (de "321" à "0321")
 
         for nom_station, ses_id in self.station.items():
             for id in ses_id:
@@ -262,18 +249,45 @@ class Graph():
                     if id == numero:
                         chemin[index] = nom_station
 
+    def change_Station_to_Num(self, nom): #plus court chemin (tkinter) ex :("Ourcq" à 226)
+        if nom in self.station:
+            val = self.station[nom]
+            for num in val:
+                nom = int(num)
+        return nom
+                    
+    def change_Un_num_to_Station(self, num):
 
-
+        for nom_station, ses_id in self.station.items():
+            for id in ses_id:
+                if len(num) == 1:
+                    num = "000"+num
+                if len(num) == 2:
+                    num ="00"+num
+                if len(num) == 3:
+                    num = "0"+num
+                if id == num:
+                    num = nom_station
+        return num
+                    
 
 if __name__ == "__main__":
     a = Graph() 
 
     b = a.sommets()
     c = a.arc()
-    p=a.degre()
+    p = a.degre()
     a.recup_ligne()
-    point_de_depart = "152"
+    a.stockLigne()
+    point_de_depart = "28"
     a.init(c , point_de_depart)
-    temps , chemin = a.dijkstra(c , point_de_depart, "130", point_de_depart)
-    a.changeChemin(chemin)
+    temps , chemin = a.dijkstra(c , point_de_depart, "29", point_de_depart)
+    print(chemin)
+    a.change_Num_to_Station(chemin)
     print(chemin, temps)
+
+    print(c["313"])
+        
+
+
+  

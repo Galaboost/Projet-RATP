@@ -7,7 +7,7 @@ p=a.degre()
 listeLigne =a.recup_ligne()
 
 def underscore():
-    with open("metro2.txt", "r") as f1, open("new.txt", "w") as f2:
+    with open("metro.txt", "r") as f1, open("new.txt", "w") as f2:
         nb_line = 0
         for line in f1:
             divide = line.split()
