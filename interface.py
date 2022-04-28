@@ -38,6 +38,7 @@ def cherche_court_chemin():
 
     unGraph.init(graph1, str(station_depart))
     temps, chemin = unGraph.dijkstra(graph1, str(station_depart), str(station_darrive), str(station_depart))
+    print(temps)
 
     for ligne,val in unGraph.ligne.items(): # ligne et direction de depart
         for index, num in enumerate(val):
@@ -58,13 +59,13 @@ def cherche_court_chemin():
                 else:
                     in_case_direction = val[0]
                     in_case_direction = unGraph.change_Un_num_to_Station(in_case_direction)
-    
+
     for index, station in enumerate(chemin): # si il y a changement pendant le trajet
         if station != chemin[-1]:
             if station in graph1:
                 for ele in graph1[station]:
-                    num, temps = ele
-                    if chemin[index+1] == num and temps in unGraph.time_change_line:
+                    num, temp = ele
+                    if chemin[index+1] == num and temp in unGraph.time_change_line:
                         for ligne,val in unGraph.ligne.items():
                             for pos, numero_station in enumerate(val):
                                 if chemin[index+1] == numero_station:
@@ -81,7 +82,6 @@ def cherche_court_chemin():
                         stock = "A {0}, changez et prenez la ligne {1}, direction {2} ".format(Num_to_Nom, l2, direction2)
                         texte2 = texte2 + stock + "\n"
                         del chemin[index]
-
 
     unGraph.change_Num_to_Station(chemin)
     if chemin[0] == chemin[1]: # si changement de ligne au point de départ on le supprime
@@ -102,10 +102,11 @@ def cherche_court_chemin():
                 if duree in unGraph.time_change_line:
                     temps = temps - int(duree)
                     break
-    
+
 
     texte = "Vous êtes à la station {0} \n Prenez la ligne {1} direction {2}  ,".format(s1, l, direction)
     # texte2 est à la ligne 81
+    temps = temps//60
     texte3 = "Vous devriez arriver à {0} dans {1} minites".format(s2, temps) +"\n", chemin
 
     root2 = tk.Tk()
